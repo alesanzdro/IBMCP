@@ -1,0 +1,58 @@
+#!/bin/bash
+# ------------------------------------------------------------------
+# Alejandro Sanz Carbonell - IBMCP(UPV-CSIC Valencia) - 20-09-2016
+# Title: fastaU2miRNAnet
+# Script to adapt file in FASTA format to miRNAnet tabular format.
+# ------------------------------------------------------------------
+# USAGE
+#
+# chmod 755 fastaU2miRNAnet.sh
+# ./fastaU2miRNAnet.sh <dir with fasta files to convert>
+# Results are saved in the "data.fastU2" dir.
+#
+# ------------------------------------------------------------------
+#
+# Converts:
+# 
+# >1-181638
+# AAATCTAAACCAACTAAACCAACCTAAACCAACATCTAAACCAACT
+# >2-101002
+# AGTTAAGTTAAGTTAAGTTA
+# >3-58673
+# CCAACTCCCAACTCCCAACTC
+# >4-53901
+# CAGAGCACCCAGAGCACCCAGCAGAGCACC
+# 
+# To:
+# AAATCTAAACCAACTAAACCAACCTAAACCAACATCTAAACCAACT	181638
+# AGTTAAGTTAAGTTAAGTTA	101002
+# CCAACTCCCAACTCCCAACTC	58673
+# CAGAGCACCCAGAGCACCCAGCAGAGCACC	53901
+# ------------------------------------------------------------------
+
+#Create directory if it does not exist
+mkdir -p data.fastU2
+
+countsfasta=0
+countsNofasta=0
+
+for i in $@; do
+	filename=`basename $i`
+        extension="${filename##*.}"
+        name="${filename%.*}"
+      
+        #Check extension file
+	if [[ "$extension" == "fasta" || "$extension" == "fa"  ]]; then
+		awk '!(NR%2){print $0"\t"p}{p=$0}' $filename | sed 's/-/\t/'  | awk '{print $1 "\t" $3}' > "data.fastU2/$name.tsv"
+		countsfasta=$((countsfasta+1))
+	else
+		countsNofasta=$((countsNofasta+1))
+	fi
+
+done
+
+printf '=%.0s' {1..50}
+printf "\n $countsfasta files fasta converted \n"
+printf " $countsNofasta files NO fasta (.fasta, .fa extension) \n"
+printf '=%.0s' {1..50}
+echo "\n done!!"
