@@ -1,7 +1,3 @@
-#!/bin/bash
-# ------------------------------------------------------------------
-# Alejandro Sanz Carbonell - IBMCP(UPV-CSIC Valencia) - 20-09-2016
-# Title: fastaU2miRNAnet
 # Script to adapt file in FASTA format to miRNAnet tabular format.
 # ------------------------------------------------------------------
 # USAGE
@@ -30,14 +26,26 @@
 # CAGAGCACCCAGAGCACCCAGCAGAGCACC	53901
 # ------------------------------------------------------------------
 
+
+dir=`pwd`
+echo "Current directory: $dir"
+
+cd $@
+
 #Create directory if it does not exist
 mkdir -p data.fastU2
+
+files=`ls`
 
 countsfasta=0
 countsNofasta=0
 
-for i in $@; do
+for i in $files; do
+        #cd $i
+	echo "Working at $i"
+
 	filename=`basename $i`
+	echo $filename
         extension="${filename##*.}"
         name="${filename%.*}"
       
@@ -55,4 +63,4 @@ printf '=%.0s' {1..50}
 printf "\n $countsfasta files fasta converted \n"
 printf " $countsNofasta files NO fasta (.fasta, .fa extension) \n"
 printf '=%.0s' {1..50}
-echo "\n done!!"
+printf "\n done!! \n"
